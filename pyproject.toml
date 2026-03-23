@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "vcf2maf-py"
-version = "0.1.0"
+version = "0.1.1"
 description = "Convert VCF files to MAF format — a Python reimplementation of mskcc/vcf2maf"
 readme = "README.md"
 license = "Apache-2.0"
