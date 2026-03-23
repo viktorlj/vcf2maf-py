@@ -1,0 +1,9 @@
+##fileformat=VCFv4.2
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	TUMOR	NORMAL
+chr7	140753336	.	A	T	100	PASS	.	GT:AD:DP	0/1:30,15:45	0/0:40,0:40
+chr12	25245350	.	C	A	80	PASS	.	GT:AD:DP	0/1:50,25:75	0/0:60,0:60
+chr1	100	.	ACGT	A	50	PASS	.	GT:AD:DP	0/1:20,10:30	0/0:30,0:30
+chr1	200	.	A	ATCG	60	PASS	.	GT:AD:DP	0/1:25,15:40	0/0:35,0:35

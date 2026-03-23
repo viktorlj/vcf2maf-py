@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vcf2maf-py"
+version = "0.1.0"
+description = "Convert VCF files to MAF format — a Python reimplementation of mskcc/vcf2maf"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.9"
+authors = [
+    { name = "Viktor Ljungström" },
+]
+keywords = ["bioinformatics", "vcf", "maf", "genomics", "variant-calling", "cancer"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "click>=8.0",
+]
+
+[project.optional-dependencies]
+pysam = ["pysam>=0.20"]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[project.scripts]
+vcf2maf-py = "vcf2maf_py.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/viktorlj/vcf2maf-py"
+Documentation = "https://github.com/viktorlj/vcf2maf-py#readme"
+Repository = "https://github.com/viktorlj/vcf2maf-py"
+Issues = "https://github.com/viktorlj/vcf2maf-py/issues"
+"Original Perl version" = "https://github.com/mskcc/vcf2maf"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vcf2maf_py"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+target-version = "py39"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP"]

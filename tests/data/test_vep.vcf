@@ -1,0 +1,13 @@
+##fileformat=VCFv4.2
+##INFO=<ID=CSQ,Number=.,Type=String,Description="Consequence annotations from Ensembl VEP. Format: Allele|Consequence|IMPACT|SYMBOL|Gene|Feature_type|Feature|BIOTYPE|EXON|INTRON|HGVSc|HGVSp|cDNA_position|CDS_position|Protein_position|Amino_acids|Codons|Existing_variation|DISTANCE|STRAND|FLAGS|SYMBOL_SOURCE|HGNC_ID|CANONICAL|SIFT|PolyPhen|ALLELE_NUM">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+##FILTER=<ID=PASS,Description="All filters passed">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	TUMOR	NORMAL
+chr7	140753336	rs113488022	A	T	100	PASS	CSQ=T|missense_variant|MODERATE|BRAF|ENSG00000157764|Transcript|ENST00000288602|protein_coding|15/18||c.1799T>A|p.Val600Glu|1860|1799|600|V/E|gTg/gAg|rs113488022||1||HGNC|HGNC:1097|YES|deleterious(0)|probably_damaging(0.999)|1	GT:AD:DP	0/1:30,15:45	0/0:40,0:40
+chr12	25245350	.	C	A	80	PASS	CSQ=A|missense_variant|MODERATE|KRAS|ENSG00000133703|Transcript|ENST00000256078|protein_coding|2/6||c.35G>T|p.Gly12Val|164|35|12|G/V|gGt/gTt|||1||HGNC|HGNC:6407|YES|deleterious(0)|probably_damaging(0.998)|1	GT:AD:DP	0/1:50,25:75	0/0:60,0:60
+chr17	7673803	.	C	T	90	PASS	CSQ=T|stop_gained|HIGH|TP53|ENSG00000141510|Transcript|ENST00000269305|protein_coding|7/11||c.742C>T|p.Arg248Ter|920|742|248|R/*|Cga/Tga|||1||HGNC|HGNC:11998|YES|||1	GT:AD:DP	0/1:35,20:55	0/0:45,1:46
+chr1	115256530	.	T	TA	70	PASS	CSQ=A|frameshift_variant|HIGH|NRAS|ENSG00000213281|Transcript|ENST00000369535|protein_coding|3/7||c.181_182insA|p.Gln61ThrfsTer18|418|182|61|Q/TX||||-1||HGNC|HGNC:7989|YES|||1	GT:AD:DP	0/1:40,10:50	0/0:50,0:50
+chr2	208248389	.	GCTG	G	60	PASS	CSQ=-|inframe_deletion|MODERATE|IDH1|ENSG00000138413|Transcript|ENST00000415913|protein_coding|4/10||c.394_396del|p.Arg132del|536|394|132|R/-||||-1||HGNC|HGNC:5382|YES|||1	GT:AD:DP	0/1:38,12:50	0/0:48,0:48
+chr5	112175951	.	G	A,T	95	PASS	CSQ=A|missense_variant|MODERATE|APC|ENSG00000134982|Transcript|ENST00000257430|protein_coding|16/16||c.4348G>A|p.Glu1450Lys|4577|4348|1450|E/K|gaG/aaG|||-1||HGNC|HGNC:583|YES|tolerated(0.08)|benign(0.15)|1,T|nonsense_mutation&stop_gained|HIGH|APC|ENSG00000134982|Transcript|ENST00000257430|protein_coding|16/16||c.4348G>T|p.Glu1450Ter|4577|4348|1450|E/*|Gag/Tag|||-1||HGNC|HGNC:583|YES|||2	GT:AD:DP	0/1:50,20,5:75	0/0:60,0,0:60
