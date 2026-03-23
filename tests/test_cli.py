@@ -87,4 +87,5 @@ class TestVcf2MafCLI:
     def test_version(self, runner):
         result = runner.invoke(main, ["--version"])
         assert result.exit_code == 0
-        assert "0.1.0" in result.output
+        from vcf2maf_py import __version__
+        assert __version__ in result.output
