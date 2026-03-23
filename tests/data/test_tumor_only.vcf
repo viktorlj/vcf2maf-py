@@ -1,0 +1,10 @@
+##fileformat=VCFv4.2
+##INFO=<ID=CSQ,Number=.,Type=String,Description="Consequence annotations from Ensembl VEP. Format: Allele|Consequence|IMPACT|SYMBOL|Gene|Feature_type|Feature|BIOTYPE|EXON|INTRON|HGVSc|HGVSp|cDNA_position|CDS_position|Protein_position|Amino_acids|Codons|Existing_variation|DISTANCE|STRAND|FLAGS|SYMBOL_SOURCE|HGNC_ID|CANONICAL|SIFT|PolyPhen|ALLELE_NUM">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+##FILTER=<ID=PASS,Description="All filters passed">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	SAMPLE1
+chr7	140753336	.	A	T	100	PASS	CSQ=T|missense_variant|MODERATE|BRAF|ENSG00000157764|Transcript|ENST00000288602|protein_coding|15/18||c.1799T>A|p.Val600Glu|1860|1799|600|V/E|gTg/gAg|||1||HGNC|HGNC:1097|YES|||1	GT:AD:DP	0/1:30,15:45
+chr12	25245350	.	C	A	80	PASS	CSQ=A|missense_variant|MODERATE|KRAS|ENSG00000133703|Transcript|ENST00000256078|protein_coding|2/6||c.35G>T|p.Gly12Val|164|35|12|G/V|gGt/gTt|||1||HGNC|HGNC:6407|YES|||1	GT:AD:DP	1/1:0,60:60
+chr3	178936091	.	G	A	85	PASS	CSQ=A|missense_variant|MODERATE|PIK3CA|ENSG00000121879|Transcript|ENST00000263967|protein_coding|21/21||c.3140A>G|p.His1047Arg|3412|3140|1047|H/R|cAt/cGt|||1||HGNC|HGNC:8975|YES|||1	GT:AD:DP	0/1:35,18:53

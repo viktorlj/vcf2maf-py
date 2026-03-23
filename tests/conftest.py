@@ -30,5 +30,35 @@ def tmp_maf(tmp_path) -> str:
 
 
 @pytest.fixture
+def callers_vcf() -> str:
+    return str(DATA_DIR / "test_callers.vcf")
+
+
+@pytest.fixture
+def edge_cases_vcf() -> str:
+    return str(DATA_DIR / "test_edge_cases.vcf")
+
+
+@pytest.fixture
+def multi_transcript_vcf() -> str:
+    return str(DATA_DIR / "test_multi_transcript.vcf")
+
+
+@pytest.fixture
+def tumor_only_vcf() -> str:
+    return str(DATA_DIR / "test_tumor_only.vcf")
+
+
+@pytest.fixture
+def minimal_maf() -> str:
+    return str(DATA_DIR / "test_minimal.maf")
+
+
+@pytest.fixture
+def tmp_maf(tmp_path) -> str:
+    return str(tmp_path / "output.maf")
+
+
+@pytest.fixture
 def tmp_vcf(tmp_path) -> str:
     return str(tmp_path / "output.vcf")

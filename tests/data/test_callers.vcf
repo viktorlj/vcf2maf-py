@@ -1,0 +1,26 @@
+##fileformat=VCFv4.2
+##INFO=<ID=CSQ,Number=.,Type=String,Description="Consequence annotations from Ensembl VEP. Format: Allele|Consequence|IMPACT|SYMBOL|Gene|Feature_type|Feature|BIOTYPE|EXON|INTRON|HGVSc|HGVSp|cDNA_position|CDS_position|Protein_position|Amino_acids|Codons|Existing_variation|DISTANCE|STRAND|FLAGS|SYMBOL_SOURCE|HGNC_ID|CANONICAL|SIFT|PolyPhen|ALLELE_NUM">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=AD,Number=R,Type=Integer,Description="Allelic depths">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+##FORMAT=<ID=RO,Number=1,Type=Integer,Description="Reference allele observation count">
+##FORMAT=<ID=AO,Number=A,Type=Integer,Description="Alternate allele observation count">
+##FORMAT=<ID=AU,Number=2,Type=Integer,Description="Number of A alleles used (tier1,tier2)">
+##FORMAT=<ID=CU,Number=2,Type=Integer,Description="Number of C alleles used (tier1,tier2)">
+##FORMAT=<ID=GU,Number=2,Type=Integer,Description="Number of G alleles used (tier1,tier2)">
+##FORMAT=<ID=TU,Number=2,Type=Integer,Description="Number of T alleles used (tier1,tier2)">
+##FORMAT=<ID=TAR,Number=2,Type=Integer,Description="Reads supporting ref (tier1,tier2)">
+##FORMAT=<ID=TIR,Number=2,Type=Integer,Description="Reads supporting alt (tier1,tier2)">
+##FORMAT=<ID=DP4,Number=4,Type=Integer,Description="Ref-fwd, ref-rev, alt-fwd, alt-rev">
+##FORMAT=<ID=NR,Number=1,Type=Integer,Description="Number of reads covering variant location">
+##FORMAT=<ID=NV,Number=1,Type=Integer,Description="Number of reads containing variant">
+##FORMAT=<ID=DV,Number=1,Type=Integer,Description="Number of high-quality variant reads">
+##FILTER=<ID=PASS,Description="All filters passed">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	TUMOR	NORMAL
+chr7	140753336	.	A	T	100	PASS	CSQ=T|missense_variant|MODERATE|BRAF|ENSG00000157764|Transcript|ENST00000288602|protein_coding|15/18||c.1799T>A|p.Val600Glu|1860|1799|600|V/E|gTg/gAg|||1||HGNC|HGNC:1097|YES|||1	GT:AD:DP	0/1:30,15:45	0/0:40,0:40
+chr12	25245350	.	C	A	80	PASS	CSQ=A|missense_variant|MODERATE|KRAS|ENSG00000133703|Transcript|ENST00000256078|protein_coding|2/6||c.35G>T|p.Gly12Val|164|35|12|G/V|gGt/gTt|||1||HGNC|HGNC:6407|YES|||1	GT:RO:AO:DP	0/1:50:25:75	0/0:60:0:60
+chr17	7673803	.	C	T	90	PASS	CSQ=T|stop_gained|HIGH|TP53|ENSG00000141510|Transcript|ENST00000269305|protein_coding|7/11||c.742C>T|p.Arg248Ter|920|742|248|R/*|Cga/Tga|||1||HGNC|HGNC:11998|YES|||1	GT:CU:TU	0/1:35,36:20,21	0/0:45,46:1,2
+chr3	178936091	.	G	A	70	PASS	CSQ=A|missense_variant|MODERATE|PIK3CA|ENSG00000121879|Transcript|ENST00000263967|protein_coding|21/21||c.3140A>G|p.His1047Arg|3412|3140|1047|H/R|cAt/cGt|||1||HGNC|HGNC:8975|YES|||1	GT:DP4	0/1:18,22,10,8:.:	0/0:30,25,0,1:.:
+chr1	115256530	.	T	TA	60	PASS	CSQ=A|frameshift_variant|HIGH|NRAS|ENSG00000213281|Transcript|ENST00000369535|protein_coding|3/7||c.181_182insA|p.Gln61ThrfsTer18|418|182|61|Q/TX||||-1||HGNC|HGNC:7989|YES|||1	GT:TAR:TIR:DP	0/1:40,42:10,11:52	0/0:50,51:0,0:50
+chr2	29416089	.	C	T	55	PASS	CSQ=T|missense_variant|MODERATE|ALK|ENSG00000171094|Transcript|ENST00000389048|protein_coding|22/29||c.3522C>T|p.Phe1174Leu|4196|3522|1174|F/L|tTc/tCc|||-1||HGNC|HGNC:427|YES|||1	GT:NR:NV	0/1:60:18	0/0:55:1
+chr10	89692905	.	G	A	65	PASS	CSQ=A|missense_variant|MODERATE|PTEN|ENSG00000171862|Transcript|ENST00000371953|protein_coding|5/9||c.388C>T|p.Arg130Gly|624|388|130|R/G|Cga/Tga|||-1||HGNC|HGNC:9588|YES|||1	GT:DV:DP	0/1:14:50	0/0:0:45
