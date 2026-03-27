@@ -161,7 +161,7 @@ SO_TO_MAF: dict[str, str | None] = {
     "splice_region_variant": "Splice_Region",
     "splice_donor_5th_base_variant": "Splice_Region",
     "splice_donor_region_variant": "Splice_Region",
-    "splice_polypyrimidine_tract_variant": "Splice_Region",
+    "splice_polypyrimidine_tract_variant": "Targeted_Region",
     "incomplete_terminal_codon_variant": "Silent",
     "synonymous_variant": "Silent",
     "stop_retained_variant": "Silent",

@@ -43,6 +43,18 @@ def open_file(path: str | Path, mode: str = "r") -> Iterator[IO]:
         fh.close()
 
 
+def strip_hgvs_prefix(hgvs: str) -> str:
+    """Strip transcript/protein ID prefix from HGVS notation.
+
+    VEP returns 'NM_001365951.3:c.4588T>C'; MAF expects 'c.4588T>C'.
+    """
+    if not hgvs:
+        return ""
+    if ":" in hgvs:
+        return hgvs.split(":", 1)[1]
+    return hgvs
+
+
 def hgvsp_short(hgvsp: str) -> str:
     """Convert 3-letter amino acid HGVS notation to 1-letter.
 

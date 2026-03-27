@@ -96,11 +96,38 @@ def _unescape_vep(value: str) -> str:
     return value.replace("&", ",") if value else value
 
 
+def _vcf_alt_to_vep_allele(vcf_ref: str, vcf_alt: str) -> str:
+    """Convert a VCF ALT allele to the VEP CSQ Allele representation.
+
+    VEP trims common prefix/suffix from REF/ALT:
+    - Insertion T→TTCC: VEP allele = "TCC"
+    - Deletion GA→G: VEP allele = "-"
+    - SNP A→T: VEP allele = "T"
+    """
+    # Strip common prefix
+    prefix_len = 0
+    for r, a in zip(vcf_ref, vcf_alt):
+        if r == a:
+            prefix_len += 1
+        else:
+            break
+    ref = vcf_ref[prefix_len:]
+    alt = vcf_alt[prefix_len:]
+
+    # Strip common suffix
+    while ref and alt and ref[-1] == alt[-1]:
+        ref = ref[:-1]
+        alt = alt[:-1]
+
+    return alt if alt else "-"
+
+
 def parse_vep_csq(
     info: dict[str, str],
     field_names: list[str],
     alt_alleles: list[str] | None = None,
     target_allele: str | None = None,
+    vcf_ref: str | None = None,
 ) -> list[TranscriptEffect]:
     """Parse VEP CSQ entries from an INFO dict.
 
@@ -110,6 +137,7 @@ def parse_vep_csq(
     field_names : list of CSQ sub-field names (from the VCF header)
     alt_alleles : ALT alleles of the VCF record (for matching ALLELE_NUM)
     target_allele : if set, only return effects for this ALT allele
+    vcf_ref : VCF REF allele, needed to derive VEP-style allele for indel matching
     """
     csq_str = info.get("CSQ") or info.get("vep") or ""
     if not csq_str:
@@ -119,6 +147,11 @@ def parse_vep_csq(
     allele_num_idx = None
     if "ALLELE_NUM" in field_names:
         allele_num_idx = field_names.index("ALLELE_NUM")
+
+    # Derive the VEP-style allele from VCF REF/ALT for matching
+    vep_allele: str | None = None
+    if target_allele and vcf_ref:
+        vep_allele = _vcf_alt_to_vep_allele(vcf_ref, target_allele)
 
     for entry in csq_str.split(","):
         values = entry.split("|")
@@ -139,10 +172,9 @@ def parse_vep_csq(
                 idx = int(allele_num) - 1
                 if 0 <= idx < len(alt_alleles) and alt_alleles[idx] != target_allele:
                     continue
-        elif target_allele and entry_allele and entry_allele != target_allele:
-            # Fall back to matching by allele string
-            # VEP sometimes uses a shortened allele for indels (just the inserted bases)
-            if target_allele not in (entry_allele, "-"):
+        elif target_allele and entry_allele:
+            # Match using VEP-style allele (handles indels where VEP trims padding bases)
+            if entry_allele != target_allele and (vep_allele is None or entry_allele != vep_allele):
                 continue
 
         effect = TranscriptEffect(
@@ -257,6 +289,7 @@ def get_effects_for_record(
                 record.info, field_names,
                 alt_alleles=record.alt,
                 target_allele=target_allele,
+                vcf_ref=record.ref,
             )
     elif source == "SnpEff":
         field_names = header.ann_fields
@@ -334,14 +367,16 @@ def select_best_effect(
 def format_all_effects(effects: list[TranscriptEffect]) -> str:
     """Format all transcript effects as a semicolon-delimited summary string.
 
-    Each entry: SYMBOL,Consequence,HGVSp_Short,Transcript,RefSeq
+    Each entry: SYMBOL,Consequence,HGVSp,Transcript,RefSeq
+    Matches Perl vcf2maf format: long-form HGVSp, no transcript prefix, trailing ";".
     """
+    from vcf2maf_py.utils import strip_hgvs_prefix
+
     parts = []
     for e in effects:
-        from vcf2maf_py.utils import hgvsp_short
-        p_short = hgvsp_short(e.hgvsp)
+        hgvsp = strip_hgvs_prefix(e.hgvsp)
         refseq = e.raw.get("RefSeq", "")
         parts.append(
-            f"{e.symbol},{e.worst_consequence},{p_short},{e.feature},{refseq}"
+            f"{e.symbol},{e.worst_consequence},{hgvsp},{e.feature},{refseq}"
         )
-    return ";".join(parts)
+    return ";".join(parts) + ";" if parts else ""

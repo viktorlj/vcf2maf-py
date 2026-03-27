@@ -141,6 +141,19 @@ For each variant in the VCF:
 | liftOver | Built-in | Not yet (planned) |
 | Python API | None | Full programmatic access |
 
+### Known output differences
+
+Validated against the Perl vcf2maf on ~94,000 variants across 6 VCF files (GRCh37 and GRCh38). Row counts match exactly and 82/109 shared columns are identical. The remaining differences are:
+
+| Difference | Impact | Details |
+|-----------|--------|---------|
+| `flanking_bps` empty | Low | Perl uses `samtools faidx` to fetch trinucleotide context from a reference FASTA. Not yet implemented. |
+| `Entrez_Gene_Id` always 0 | Low | Perl has an internal gene-name-to-Entrez lookup table. Not yet implemented. |
+| `FILTER` no `common_variant` | Low | Perl appends `;common_variant` to the FILTER field for variants in common databases. Not implemented. |
+| `HGVSp_Short` splice sites | Low | Perl generates synthetic `p.X{position}_splice` for splice donor/acceptor variants. Not implemented (2 of 103 variants in test set). |
+| Population AF `0` vs empty | Cosmetic | Python preserves VEP's `0` for absent population frequencies; Perl leaves the field empty. |
+| `t_depth` edge case | Rare | For ~5% of indels, the Perl tool computes `t_depth` as `t_ref_count + t_alt_count` while Python uses the VCF `DP` field. Both are valid approaches. |
+
 ## Development
 
 ```bash

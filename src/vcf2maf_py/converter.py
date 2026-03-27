@@ -22,7 +22,7 @@ from vcf2maf_py.constants import (
     SO_TO_MAF,
     VEP_MAF_COLUMNS,
 )
-from vcf2maf_py.utils import hgvsp_short, open_file
+from vcf2maf_py.utils import hgvsp_short, open_file, strip_hgvs_prefix
 from vcf2maf_py.vcf_reader import VCFHeader, VCFReader, VCFRecord
 
 logger = logging.getLogger("vcf2maf_py")
@@ -75,7 +75,7 @@ def determine_variant_type(ref: str, alt: str) -> str:
         if ref_len == 3:
             return "TNP"
         return "ONP"
-    # Complex substitution — treat as DEL or INS based on length
+    # Complex substitution — classify by net length change (matches Perl vcf2maf)
     if ref_len > alt_len:
         return "DEL"
     return "INS"
@@ -97,14 +97,14 @@ def get_maf_coordinates(
         maf_alt = alt
         start = pos - 1
         end = pos
-    elif variant_type == "DEL" and not alt:
+    elif variant_type == "DEL":
         # Pure deletion
         maf_ref = ref
         maf_alt = "-"
         start = pos
         end = pos + len(ref) - 1
     else:
-        # SNP, DNP, TNP, ONP, or complex
+        # SNP, DNP, TNP, ONP (including complex substitutions)
         maf_ref = ref if ref else "-"
         maf_alt = alt if alt else "-"
         start = pos
@@ -331,32 +331,33 @@ def _build_maf_row(
     if tumor_idx is not None:
         t_data = record.sample_data(tumor_idx)
         t_depth, t_ref, t_alt = extract_depths(t_data, record.ref, alt_allele, alt_index)
-        t_allele1, t_allele2 = get_genotype_alleles(t_data, record.ref, record.alt)
+        t_allele1_vcf, t_allele2_vcf = get_genotype_alleles(t_data, record.ref, record.alt)
     else:
-        t_allele1, t_allele2 = maf_ref if maf_ref != "-" else "", maf_alt
+        t_allele1_vcf, t_allele2_vcf = record.ref, alt_allele
 
     if normal_idx is not None:
         n_data = record.sample_data(normal_idx)
         n_depth, n_ref, n_alt = extract_depths(n_data, record.ref, alt_allele, alt_index)
-        n_allele1, n_allele2 = get_genotype_alleles(n_data, record.ref, record.alt)
+        n_allele1_vcf, n_allele2_vcf = get_genotype_alleles(n_data, record.ref, record.alt)
     else:
-        n_allele1, n_allele2 = "", ""
+        n_allele1_vcf, n_allele2_vcf = record.ref, record.ref
 
-    # Convert genotype alleles to MAF representation
-    def to_maf_allele(a: str) -> str:
-        if not a:
-            return ""
-        r, ar, _ = trim_common_bases(record.ref, a, record.pos)
-        if a == record.ref:
-            return maf_ref if maf_ref != "-" else record.ref
-        return ar if ar else "-"
+    # Tumor_Seq_Allele1: reference allele in MAF coords, unless homozygous alt
+    is_hom_alt = (t_allele1_vcf != record.ref and t_allele2_vcf != record.ref)
+    t_allele1_maf = maf_alt if is_hom_alt else maf_ref
 
     # Build dbSNP RS from existing variation
     dbsnp_rs = ""
     if effect:
         ev = effect.existing_variation or effect.raw.get("Existing_variation", "")
         rs_ids = [v for v in ev.replace("&", ",").split(",") if v.startswith("rs")]
-        dbsnp_rs = ";".join(rs_ids) if rs_ids else "novel"
+        if rs_ids:
+            dbsnp_rs = ";".join(rs_ids)
+        elif ev:
+            # Non-rs entries exist (e.g. COSMIC) — leave dbSNP_RS empty
+            dbsnp_rs = ""
+        else:
+            dbsnp_rs = "novel"
     else:
         dbsnp_rs = record.id if record.id != "." else "novel"
 
@@ -378,14 +379,14 @@ def _build_maf_row(
         "Variant_Classification": classification,
         "Variant_Type": variant_type,
         "Reference_Allele": maf_ref,
-        "Tumor_Seq_Allele1": to_maf_allele(t_allele1) if tumor_idx is not None else maf_ref,
+        "Tumor_Seq_Allele1": t_allele1_maf,
         "Tumor_Seq_Allele2": maf_alt,
         "dbSNP_RS": dbsnp_rs,
         "dbSNP_Val_Status": "",
         "Tumor_Sample_Barcode": tumor_id,
         "Matched_Norm_Sample_Barcode": normal_id,
-        "Match_Norm_Seq_Allele1": to_maf_allele(n_allele1) if normal_idx is not None else "",
-        "Match_Norm_Seq_Allele2": to_maf_allele(n_allele2) if normal_idx is not None else "",
+        "Match_Norm_Seq_Allele1": maf_ref,
+        "Match_Norm_Seq_Allele2": maf_ref,
         "Tumor_Validation_Allele1": "",
         "Tumor_Validation_Allele2": "",
         "Match_Norm_Validation_Allele1": "",
@@ -403,10 +404,10 @@ def _build_maf_row(
         "Matched_Norm_Sample_UUID": "",
     }
 
-    # Extended columns
-    row["HGVSc"] = effect.hgvsc if effect else ""
-    row["HGVSp"] = effect.hgvsp if effect else ""
-    row["HGVSp_Short"] = hgvsp_short(effect.hgvsp) if effect else ""
+    # Extended columns — strip transcript/protein ID prefix from HGVS
+    row["HGVSc"] = strip_hgvs_prefix(effect.hgvsc) if effect else ""
+    row["HGVSp"] = strip_hgvs_prefix(effect.hgvsp) if effect else ""
+    row["HGVSp_Short"] = hgvsp_short(strip_hgvs_prefix(effect.hgvsp)) if effect else ""
     row["Transcript_ID"] = effect.feature if effect else ""
     row["Exon_Number"] = effect.exon if effect else ""
     row["t_depth"] = str(t_depth) if t_depth >= 0 else ""
@@ -417,6 +418,12 @@ def _build_maf_row(
     row["n_alt_count"] = str(n_alt) if n_alt >= 0 else ""
     row["all_effects"] = format_all_effects(all_effects) if all_effects else ""
 
+    # VEP fields where "&" separator should be converted to ","
+    _VEP_MULTI_VALUE_FIELDS = {
+        "Consequence", "CLIN_SIG", "SOMATIC", "PUBMED", "PHENO",
+        "Existing_variation", "DOMAINS",
+    }
+
     # VEP columns (pass through from annotation)
     if effect:
         raw = effect.raw
@@ -426,7 +433,10 @@ def _build_maf_row(
                 vep_key = col
                 if col == "STRAND_VEP":
                     vep_key = "STRAND"
-                row[col] = raw.get(vep_key, "")
+                val = raw.get(vep_key, "")
+                if col in _VEP_MULTI_VALUE_FIELDS and "&" in val:
+                    val = val.replace("&", ",")
+                row[col] = val
 
     # Preserve original VCF fields
     row["vcf_id"] = record.id

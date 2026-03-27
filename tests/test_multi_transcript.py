@@ -52,9 +52,10 @@ class TestMultiTranscriptSelection:
         assert "ENST00000497784" in all_eff
 
     def test_all_effects_count(self):
-        """BRAF has 3 transcripts; all_effects should have 3 entries."""
+        """BRAF has 3 transcripts; all_effects should have 3 entries (with trailing ;)."""
         r = self.by_gene["BRAF"]
-        entries = r["all_effects"].split(";")
+        # Strip trailing ";" before splitting to get clean count
+        entries = [e for e in r["all_effects"].split(";") if e]
         assert len(entries) == 3
 
     def test_tp53_all_effects_includes_wrap53(self):
